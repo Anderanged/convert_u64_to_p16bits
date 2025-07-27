@@ -144,7 +144,7 @@ const fn convert_u64_to_p16bits(a: u64) -> u16 {
             frac_a <<= 1;
         }
         let k = log2 >> 1;
-        let exp_a = ((log2 & 0x1) << (12 - k)) as u64;
+        let exp_a = ((log2 & 0x1) as u64) << (12 - k);
         frac_a ^= mask;
         let mut ui_a = ((0x7FFF ^ (0x3FFF >> k)) | exp_a | (frac_a >> (k + 13))) as u16;
         mask = 0x1000 << k;
