@@ -1,7 +1,6 @@
 use super::P16E1;
 use crate::u32_with_sign;
 use crate::u64_with_sign;
-use core::mem::transmute;
 use core::{f32, f64};
 
 crate::macros::impl_convert!(P16E1);
@@ -221,7 +220,7 @@ const fn convert_p16bits_to_u64(ui_a: u16) -> u64 {
 impl P16E1 {
     pub const fn from_f32(float: f32) -> Self {
         use crate::RawFloat;
-        let ui: u32 = unsafe { transmute(float) };
+        let ui: u32 = f32::to_bits(float);
 
         let sign = (ui & f32::SIGN_MASK) != 0;
 
@@ -259,7 +258,7 @@ impl P16E1 {
 
     pub const fn from_f64(float: f64) -> Self {
         use crate::RawFloat;
-        let ui: u64 = unsafe { transmute(float) };
+        let ui: u64 = f64::to_bits(float);
 
         let sign = (ui & f64::SIGN_MASK) != 0;
 
@@ -313,7 +312,7 @@ impl P16E1 {
             let frac_a = ((tmp << 2) as u32) << 7;
             let exp_a = (((k_a as u32) << 1) + ((tmp >> 14) as u32)).wrapping_add(127) << 23;
 
-            unsafe { transmute(exp_a + frac_a + ((sign_a as u32) << 16)) }
+            f32::from_bits(exp_a + frac_a + ((sign_a as u32) << 16))
         }
     }
 }
@@ -337,7 +336,7 @@ impl P16E1 {
             let frac_a = ((tmp << 2) as u64) << 36;
             let exp_a = (((k_a as u64) << 1) + ((tmp >> 14) as u64)).wrapping_add(1023) << 52;
 
-            unsafe { transmute(exp_a + frac_a + ((sign_a as u64) << 48)) }
+            f64::from_bits(exp_a + frac_a + ((sign_a as u64) << 48))
         }
     }
 }

@@ -1,14 +1,13 @@
 use super::P32E2;
 use crate::{u32_with_sign, u64_with_sign};
 use core::f64;
-use core::mem::transmute;
 
 crate::macros::impl_convert!(P32E2);
 
 impl P32E2 {
     pub const fn from_f32(float: f32) -> Self {
         use crate::RawFloat;
-        let ui: u32 = unsafe { transmute(float) };
+        let ui: u32 = f32::to_bits(float);
 
         let sign = (ui & f32::SIGN_MASK) != 0;
 
@@ -46,7 +45,7 @@ impl P32E2 {
 
     pub const fn from_f64(float: f64) -> Self {
         use crate::RawFloat;
-        let ui: u64 = unsafe { transmute(float) };
+        let ui: u64 = f64::to_bits(float);
 
         let sign = (ui & f64::SIGN_MASK) != 0;
 
@@ -104,14 +103,14 @@ impl P32E2 {
             let frac_a = ((tmp << 3) as u64) << 20;
             let exp_a = (((k_a as u64) << 2) + ((tmp >> 29) as u64)).wrapping_add(1023) << 52;
 
-            unsafe { transmute(exp_a + frac_a + ((sign_a as u64) << 32)) }
+            f64::from_bits(exp_a + frac_a + ((sign_a as u64) << 32))
         }
     }
 
     #[inline]
     pub const fn to_i32(self) -> i32 {
         if self.is_nar() {
-            return i32::min_value();
+            return i32::MIN;
         }
 
         let mut ui_a = self.to_bits();
@@ -123,9 +122,9 @@ impl P32E2 {
 
         if ui_a > 0x_7faf_ffff {
             return if sign {
-                i32::min_value()
+                i32::MIN
             } else {
-                i32::max_value()
+                i32::MAX
             };
         };
 
@@ -137,7 +136,7 @@ impl P32E2 {
     #[inline]
     pub const fn to_u32(self) -> u32 {
         if self.is_nar() {
-            return 0x8000_0000; // Error: Should be u32::max_value()
+            return 0x8000_0000; // Error: Should be u32::MAX
         }
 
         let ui_a = self.to_bits();
@@ -154,7 +153,7 @@ impl P32E2 {
         let mut ui_a = self.to_bits();
 
         if ui_a == 0x8000_0000 {
-            return i64::min_value();
+            return i64::MIN;
         }
 
         let sign = (ui_a & 0x8000_0000) != 0;
@@ -164,9 +163,9 @@ impl P32E2 {
 
         if ui_a > 0x_7fff_afff {
             return if sign {
-                i64::min_value()
+                i64::MIN
             } else {
-                i64::max_value()
+                i64::MAX
             };
         };
 
@@ -420,7 +419,7 @@ fn convert_p32_i32() {
         if p % P32E2::new(0x_3800_0000) == P32E2::ZERO {
             continue;
         }
-        if f as i32 == i32::min_value() {
+        if f as i32 == i32::MIN {
             continue;
         }
         assert_eq!(i32::from(p), f as i32);
@@ -437,7 +436,7 @@ fn convert_p32_i64() {
         if p % P32E2::new(0x_3800_0000) == P32E2::ZERO {
             continue;
         }
-        if f as i64 == i64::min_value() {
+        if f as i64 == i64::MIN {
             continue;
         }
         assert_eq!(i64::from(p), f as i64);

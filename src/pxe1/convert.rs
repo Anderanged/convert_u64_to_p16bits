@@ -289,7 +289,7 @@ impl<const N: u32> PxE1<{ N }> {
     pub const fn to_i32(self) -> i32 {
         //NaR
         if self.is_nar() {
-            return i32::min_value();
+            return i32::MIN;
         }
 
         let mut ui_a = self.to_bits();
@@ -317,7 +317,7 @@ impl<const N: u32> PxE1<{ N }> {
     pub const fn to_i64(self) -> i64 {
         //NaR
         if self.is_nar() {
-            return i64::min_value();
+            return i64::MIN;
         }
 
         let mut ui_a = self.to_bits();
