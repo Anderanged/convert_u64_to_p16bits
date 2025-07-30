@@ -332,7 +332,7 @@ const fn convert_u32_to_p32bits(a: u32) -> u32 {
         let exp_a: u32 = ((log2 & 0x3) as u32) << (27 - k);
         frac_a ^= mask;
 
-        let mut ui_a = (0x7FFF_FFFF ^ (0x3FFF_FFFF >> k)) | exp_a | frac_a >> (k + 4);
+        let mut ui_a = (0x7FFF_FFFF ^ (0x3FFF_FFFF >> k)) | exp_a | (frac_a >> (k + 4));
 
         mask = 0x8 << k; //bit_n_plus_one
 
