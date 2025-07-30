@@ -421,9 +421,10 @@ impl<const N: u32> PxE1<{ N }> {
                     }
                 }
             } else {
-                ui_a =
-                    ((0x7FFFFFFFu32 ^ (0x3FFFFFFF >> k)) | (exp_a << (27 - k)) | (frac_a >> (k + 4)))
-                        & Self::mask();
+                ui_a = ((0x7FFFFFFFu32 ^ (0x3FFFFFFF >> k))
+                    | (exp_a << (27 - k))
+                    | (frac_a >> (k + 4)))
+                    & Self::mask();
                 let mask = 0x8 << (k - N); //bitNPlusOne
                 if (mask & frac_a) != 0 && (((mask - 1) & frac_a) | ((mask << 1) & frac_a)) != 0 {
                     ui_a += 0x80000000_u32 >> (N - 1);

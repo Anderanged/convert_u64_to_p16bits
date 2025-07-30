@@ -121,11 +121,7 @@ impl P32E2 {
         }
 
         if ui_a > 0x_7faf_ffff {
-            return if sign {
-                i32::MIN
-            } else {
-                i32::MAX
-            };
+            return if sign { i32::MIN } else { i32::MAX };
         };
 
         let i_z = convert_p32bits_to_u32(ui_a);
@@ -162,11 +158,7 @@ impl P32E2 {
         }
 
         if ui_a > 0x_7fff_afff {
-            return if sign {
-                i64::MIN
-            } else {
-                i64::MAX
-            };
+            return if sign { i64::MIN } else { i64::MAX };
         };
 
         let i_z = convert_p32bits_to_u64(ui_a);
