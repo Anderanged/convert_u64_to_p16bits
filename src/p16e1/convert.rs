@@ -402,3 +402,43 @@ fn convert_p16_i64() {
         assert_eq!(i64::from(p), f as i64);
     }
 }
+
+#[test]
+fn convert_p16bits_u64() {
+    for n in 0x5401..0x7fffu16 {
+        let u = convert_p16bits_to_u64(n);
+        // range here is huge but honestly it's simple and should work.
+        // would like something more
+        assert!(u > 2);
+        assert!(u < 0x1000_0000);
+    }
+}
+
+#[test]
+fn convert_p16bits_u32() {
+    for n in 0x5401..0x7fffu16 {
+        let u = convert_p16bits_to_u32(n);
+        assert!(u > 2);
+        assert!(u < 0x1000_0000);
+    }
+}
+
+#[test]
+fn convert_u64_p16bits() {
+    assert_eq!(P16E1::ZERO.to_bits(), convert_u64_to_p16bits(0));
+    assert_eq!(P16E1::ONE.to_bits(), convert_u64_to_p16bits(1));
+    assert_eq!(P16E1::MAX.to_bits(), convert_u64_to_p16bits(0x1000_0000));
+    // more rigorous method needed to truly test all possible numbers.
+    // however, this should suffice as a warning.
+    assert_eq!(0b0_1110_1_00_0000_0000u16, convert_u64_to_p16bits(32));
+    assert_eq!(0b0_110_1_111_0000_0000u16, convert_u64_to_p16bits(15));
+}
+
+#[test]
+fn convert_u32_p16bits() {
+    assert_eq!(P16E1::ZERO.to_bits(), convert_u32_to_p16bits(0));
+    assert_eq!(P16E1::ONE.to_bits(), convert_u32_to_p16bits(1));
+    assert_eq!(P16E1::MAX.to_bits(), convert_u32_to_p16bits(0x1000_0000));
+    assert_eq!(0b0_10_1_1000_0000_0000u16, convert_u32_to_p16bits(3));
+    assert_eq!(0b0_11110_1_0_0000_0000u16, convert_u32_to_p16bits(128));
+}
